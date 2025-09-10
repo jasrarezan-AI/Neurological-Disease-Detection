@@ -124,6 +124,28 @@ def predict_with_safety(input_df: pd.DataFrame):
         return label, "ok", proba, None
     except Exception as e:
         return "Insufficient data", f"Prediction error: {e}", None, None
+if st.button("Predict"):
+    # Assuming 'best_model' and 'le' (label encoder) are already loaded
+    
+    # Predict the class (encoded label)
+    prediction_encoded = best_model.predict(input_df)
+    
+    # Get the class probabilities for each class
+    prediction_proba = best_model.predict_proba(input_df)  # Returns probabilities for each class
+
+    # Decode the predicted class (convert encoded prediction back to original labels)
+    prediction_decoded = le.inverse_transform(prediction_encoded)
+
+    # Display the predicted class
+    st.write(f"The predicted disease is: **{prediction_decoded[0]}**")
+
+    # Display the class probabilities (for each class)
+    # Create a DataFrame for better display of class probabilities
+    prob_df = pd.DataFrame(prediction_proba, columns=le.classes_)  # This will show probabilities for each class
+
+    # Display the probabilities in a table format
+    st.write("Class Probabilities:")
+    st.dataframe(prob_df)
 
 # Collect input
 if mode == "Manual":
